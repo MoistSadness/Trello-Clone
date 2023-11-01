@@ -3,7 +3,7 @@ import Board from "./Board"
 
 export default function Kanban() {
     return (
-        <div className="flex flex-row h-full">
+        <div className=" bg-currentLine flex flex-row h-full overflow-y-auto">
             <Sidebar />
             <Board />
         </div>

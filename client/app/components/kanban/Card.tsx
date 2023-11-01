@@ -1,5 +1,5 @@
 export default function Card(){
     return (
-        <div>card</div>
+        <div className="bg-purple">I am a card!</div>
     )
 }
