@@ -3,13 +3,15 @@
  */
 
 export default class CardModel {
-    id: string
-    name: string
+    ID: string
+    parentID:string
+    title: string
     content: string
 
-    constructor(id: string, name: string, content: string){
-        this.id = id
-        this.name = name
+    constructor(ID: string, parentID:string, title: string, content: string){
+        this.ID = ID
+        this.parentID = parentID,
+        this.title = title
         this.content = content
     }
 }

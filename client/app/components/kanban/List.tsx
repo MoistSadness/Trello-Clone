@@ -6,26 +6,28 @@ import Item from "@/app/Models/CardModel"
 import Card from "./Card"
 
 type ListProps = {
-    id: string,
+    ID: string,
     title: string,
     items: Item[]
 }
 
-export default function List({id, title, items}: ListProps) {
+export default function List({ID, title, items}: ListProps) {
+
+
     const {setNodeRef} = useDroppable({
-        id: id,
+        id: ID,
     })
 
     function RenderCards() {
         return (
             items.map((item, index): any => (
-                <Card key={index} id={item.id} title={item.name} index={index} parent={id} />
+                <Card key={index} id={item.ID} title={item.title} index={index} parent={ID} />
             ))
         )
     }
 
     return (
-        <section className="bg-cyan w-56 h-fit flex flex-col p-2">
+        <section ref={setNodeRef} className="bg-cyan w-56 h-fit flex flex-col p-2">
             {title} Drop onto me!
             {RenderCards()}
         </section>

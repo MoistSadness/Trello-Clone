@@ -5,12 +5,12 @@ import CardModel from "./CardModel";
  */
 
 export default class ListModel {
-    id;
+    ID;
     title;
     content;
 
-    constructor(id: string, title: string, content: CardModel[]){
-        this.id = id
+    constructor(ID: string, title: string, content: CardModel[]){
+        this.ID = ID
         this.title = title
         this.content = content
     }

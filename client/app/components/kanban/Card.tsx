@@ -11,6 +11,8 @@ type CardProps = {
 }
 
 export default function Card({id, title, index, parent}: CardProps){
+
+
     const {attributes, listeners, setNodeRef, transform} = useDraggable({
         id: id, 
         data: { title, index, parent }
@@ -26,7 +28,7 @@ export default function Card({id, title, index, parent}: CardProps){
             {...listeners} 
             {...attributes}
         >
-            {id}. I am a card! Drag Me!
+            {title}
         </section>
     )
 }
