@@ -2,22 +2,37 @@
 
 import { useState, useEffect, useReducer } from "react"
 import { BoardReducer, ACTION_TYPES } from "@/app/utils/BoardReducer"
-import { DndContext, rectIntersection } from "@dnd-kit/core"
+import {
+    DndContext,
+    rectIntersection,
+    closestCenter,
+    DragOverlay,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from "@dnd-kit/core"
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    verticalListSortingStrategy,
+} from "@dnd-kit/sortable"
 import { nanoid } from 'nanoid'
 import List from "./List"
 import CardModel from "@/app/Models/CardModel"
 import ListModel from "@/app/Models/ListModel"
-import Card from "./Card"
 
 export default function Board() {
     // Each array represents one List on the board
     const initialState: ListModel[] = []
     const [boardstate, dispatch] = useReducer(BoardReducer, initialState)
-    console.log("Rendering board")
+
+    console.log(boardstate)
+
 
     // Inititalize board data here
     useEffect(() => {
-        console.log("Initializing")
         dispatch({
             type: 'INITIALIZE',
             payload: [
@@ -40,14 +55,31 @@ export default function Board() {
         })
     }, [])
 
-    // When changes are made to the board, rerender it
+    const [activeId, setActiveId] = useState(null);
 
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
 
-    function HandleDragEnd(e: any) {
+    function handleCardDragStart(e: any) {
+        const { active } = e;
+
+        setActiveId(active.id);
+    }
+
+    function handleCardDragOver(e: any) {
+        //console.log(e)
+        console.log("over")
+    }
+
+    function HandleCardDragEnd(e: any) {
         console.log(e)
         const destinationID: string = e.over.id; // The id for the list that is currently being hovering over
         const cardID: string = e.active.id;      // ID for the selected card item
-        const parentID = e.active.data.current?.parent ?? "Todo";     // Gets the original parent for the item that is being moved
+        const parentID = e.active.data.current?.parent;     // Gets the original parent for the item that is being moved
 
         // Update state logic
         dispatch({
@@ -56,12 +88,27 @@ export default function Board() {
                 destinationID, cardID, parentID
             }
         })
+        setActiveId(null);
     }
 
+    const listIDs = useState([])
+    useEffect(()=>{
+        const ids: string[] = []
+        boardstate.map((list: ListModel) => ids.push(list.ID))
+    }, [boardstate])
+
     function RenderBoard() {
-        return boardstate?.map((boardItem: ListModel) => (
-            <List key={boardItem.ID} ID={boardItem.ID} title={boardItem.title} items={boardItem.content} />
-        ))
+        const ids: string[] = []
+        boardstate.map((list: ListModel) => ids.push(list.ID))
+
+        return boardstate?.map((list: ListModel) => {
+            return (
+                <SortableContext key={list.ID} items={ids} strategy={verticalListSortingStrategy}>
+                    <List key={list.ID} ID={list.ID} title={list.title} items={list.content} />
+                </SortableContext>
+            )
+
+        })
     }
 
     return (
@@ -70,13 +117,24 @@ export default function Board() {
                 Title
             </nav>
 
-            <DndContext id={nanoid()} collisionDetection={rectIntersection} onDragEnd={HandleDragEnd}>
+            <DndContext
+                id={nanoid()}
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragStart={handleCardDragStart}
+                onDragOver={handleCardDragOver}
+                onDragEnd={HandleCardDragEnd}
+            >
+
+
+
                 <div className="bg-yellow-300 flex flex-rows gap-4">
                     {RenderBoard()}
                     <section className="bg-cyan w-36 h-fit">
                         New List
                     </section>
                 </div>
+
             </DndContext>
 
         </div>

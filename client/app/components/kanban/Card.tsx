@@ -1,7 +1,8 @@
 'use client'
 
 import { useDraggable } from "@dnd-kit/core"
-import {CSS} from '@dnd-kit/utilities';
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from '@dnd-kit/utilities';
 
 type CardProps = {
     id: string,
@@ -10,22 +11,27 @@ type CardProps = {
     parent: string,
 }
 
-export default function Card({id, title, index, parent}: CardProps){
+export default function Card({ id, title, index, parent }: CardProps) {
 
 
-    const {attributes, listeners, setNodeRef, transform} = useDraggable({
-        id: id, 
-        data: { title, index, parent }
-    })
-    const style = transform ? {
-        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-      } : undefined;
+    const { attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition, } = useSortable({
+            id: id,
+            data: { title, index, parent }
+        })
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+    };
     return (
-        <section 
-            className="bg-purple" 
+        <section
+            className="bg-purple"
             style={style}
-            ref={setNodeRef} 
-            {...listeners} 
+            ref={setNodeRef}
+            {...listeners}
             {...attributes}
         >
             {title}

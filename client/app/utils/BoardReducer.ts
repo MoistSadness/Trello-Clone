@@ -67,10 +67,14 @@ function HandleInitialize(payload: ListModel[]) {
 }
 
 function HandleMoveCard(state: ListModel[], payload: any) {
+    console.log(payload)
     // iterate through the array of lists until the destination ID is matched
     const destinationIndex: number | undefined = state?.findIndex((list: ListModel) => payload.destinationID === list.ID)
     const parentIndex: number | undefined = state?.findIndex((list: ListModel) => payload.parentID === list.ID)
     const cardIndex: number | undefined = state[parentIndex].content?.findIndex((card: CardModel) => payload.cardID === card.ID)
+    
+    console.log(destinationIndex,parentIndex,cardIndex)
+    
     // If the target card is not found, do nothing
     if (cardIndex == -1) return state
 
@@ -86,7 +90,7 @@ function HandleMoveCard(state: ListModel[], payload: any) {
     parentList.content.splice(cardIndex, 1);
 
     // Add the card to the destination list
-    destinationList.content.push(targetCard);
+    //destinationList.content.push(targetCard);
 
     // Create a new state with the modified source and destination lists
     const newstate = state.map((list, index) => {
