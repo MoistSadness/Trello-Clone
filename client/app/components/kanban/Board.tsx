@@ -28,8 +28,7 @@ export default function Board() {
     const initialState: ListModel[] = []
     const [boardstate, dispatch] = useReducer(BoardReducer, initialState)
 
-    console.log(boardstate)
-
+    //console.log(boardstate)
 
     // Inititalize board data here
     useEffect(() => {
@@ -64,50 +63,74 @@ export default function Board() {
         })
     );
 
-    function handleCardDragStart(e: any) {
-        const { active } = e;
-
-        setActiveId(active.id);
-    }
-
     function handleCardDragOver(e: any) {
-        //console.log(e)
-        console.log("over")
+        console.log("over: ", e)
+        const { active, over } = e;
+        dispatch({
+            type: ACTION_TYPES.HOVER_CARD,
+            payload: {
+                active, over
+            }
+        })
     }
 
     function HandleCardDragEnd(e: any) {
-        console.log(e)
-        const destinationID: string = e.over.id; // The id for the list that is currently being hovering over
-        const cardID: string = e.active.id;      // ID for the selected card item
-        const parentID = e.active.data.current?.parent;     // Gets the original parent for the item that is being moved
+        const { active, over } = e;
+        if (active.id !== over.id) {
+            console.log("boardsdtate: ", boardstate)
+            console.log("active: ", active)
+            console.log("over: ", over)
 
-        // Update state logic
-        dispatch({
-            type: ACTION_TYPES.MOVE_CARD,
-            payload: {
-                destinationID, cardID, parentID
-            }
-        })
-        setActiveId(null);
+            dispatch({
+                type: ACTION_TYPES.MOVE_CARD,
+                payload: {
+                    active, over
+                }
+            })
+        }
     }
 
-    const listIDs = useState([])
-    useEffect(()=>{
-        const ids: string[] = []
-        boardstate.map((list: ListModel) => ids.push(list.ID))
+    /*
+    // store the ids for all the cards in a matrix
+    const [ids, setIds] = useState<string[][]>([])
+    useEffect(() => {
+        const boardIds: string[][] = []
+        boardstate.map((list: ListModel) => {
+            //console.log("list", list)
+            // create an array of ids
+            let listIds: string[] = []
+            list.content.map((card: CardModel) => {
+                listIds.push(card.ID)
+            })
+            boardIds.push(listIds)
+            listIds = []
+        })
+        console.log("ids", boardIds)
+        setIds(boardIds)
+
     }, [boardstate])
+    */
 
     function RenderBoard() {
+        /*
         const ids: string[] = []
-        boardstate.map((list: ListModel) => ids.push(list.ID))
+        boardstate.map((list: ListModel) => ids.push(list?.ID))
+        */
 
-        return boardstate?.map((list: ListModel) => {
+
+        return boardstate?.map((list: ListModel, index: number) => {
+            // Create a list of ID's required for the 
+            /**/
+            const listItems: string[] = []
+            list.content.map((card: CardModel) => {
+                listItems.push(card.ID)
+            })
+            
             return (
-                <SortableContext key={list.ID} items={ids} strategy={verticalListSortingStrategy}>
+                <SortableContext key={list.ID} items={listItems} strategy={verticalListSortingStrategy}>
                     <List key={list.ID} ID={list.ID} title={list.title} items={list.content} />
                 </SortableContext>
             )
-
         })
     }
 
@@ -121,7 +144,6 @@ export default function Board() {
                 id={nanoid()}
                 sensors={sensors}
                 collisionDetection={closestCenter}
-                onDragStart={handleCardDragStart}
                 onDragOver={handleCardDragOver}
                 onDragEnd={HandleCardDragEnd}
             >
