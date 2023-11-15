@@ -54,8 +54,6 @@ export default function Board() {
         })
     }, [])
 
-    const [activeId, setActiveId] = useState(null);
-
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor, {
@@ -63,9 +61,10 @@ export default function Board() {
         })
     );
 
-    function handleCardDragOver(e: any) {
-        console.log("over: ", e)
-        const { active, over } = e;
+    const handleCardDragOver = ({active, over}: any) => {
+        //console.log("HANDLING DRAG")
+        //console.log("over: ", e)
+        
         dispatch({
             type: ACTION_TYPES.HOVER_CARD,
             payload: {
@@ -77,9 +76,9 @@ export default function Board() {
     function HandleCardDragEnd(e: any) {
         const { active, over } = e;
         if (active.id !== over.id) {
-            console.log("boardsdtate: ", boardstate)
-            console.log("active: ", active)
-            console.log("over: ", over)
+            //console.log("boardsdtate: ", boardstate)
+            //console.log("active: ", active)
+            //console.log("over: ", over)
 
             dispatch({
                 type: ACTION_TYPES.MOVE_CARD,
@@ -145,10 +144,7 @@ export default function Board() {
                 sensors={sensors}
                 collisionDetection={closestCenter}
                 onDragOver={handleCardDragOver}
-                onDragEnd={HandleCardDragEnd}
             >
-
-
 
                 <div className="bg-yellow-300 flex flex-rows gap-4">
                     {RenderBoard()}

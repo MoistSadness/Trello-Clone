@@ -28,13 +28,13 @@ export default function Card({ id, title, index, parent }: CardProps) {
     };
     return (
         <section
-            className="bg-purple"
+            className="bg-purple mt-1"
             style={style}
             ref={setNodeRef}
             {...listeners}
             {...attributes}
         >
-            {title}
+            {id}
         </section>
     )
 }
